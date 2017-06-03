@@ -9,6 +9,13 @@ Rank = namedtuple('Rank', 'value')
 Rating = namedtuple('Rating', 'value')
 
 
+def sort_player_by_rating(players):
+    return sorted(
+        players,
+        key=lambda x: x.rating.value,
+        reverse=True)
+
+
 def default_rating():
     return Rating(1500)
 
@@ -35,10 +42,7 @@ class MemoryPlayerRepository(object):
             return Player(pseudo, default_rating())
 
     def all_players_by_rating(self):
-        return sorted(
-            self.players.values(),
-            key=lambda x: x.rating.value,
-            reverse=True)
+        return sort_player_by_rating(self.players.values())
 
     def save(self, player):
         self.players[player.pseudo] = player

@@ -1,5 +1,5 @@
 import json
-from leaderboard.model import Player, default_rating, Rating
+from leaderboard.model import Player, default_rating, Rating, sort_player_by_rating
 
 
 class JsonPlayerRepository(object):
@@ -9,19 +9,19 @@ class JsonPlayerRepository(object):
 
     def find_player_by_pseudo(self, pseudo):
         if pseudo in self.__data:
-            return Player(pseudo, Rating(self.__data[pseudo]['rating']))
+            return self.__hydrate(pseudo, self.__data[pseudo])
         else:
             return Player(pseudo, default_rating())
 
     def all_players_by_rating(self):
-        return sorted(
-            [Player(pseudo, Rating(data['rating'])) for pseudo, data in self.__data.iteritems()],
-            key=lambda x: x.rating.value,
-            reverse=True)
+        return sort_player_by_rating([self.__hydrate(pseudo, data) for pseudo, data in self.__data.iteritems()])
 
     def save(self, player):
         self.__data[player.pseudo] = {'rating': player.rating.value}
         self.__save()
+
+    def __hydrate(self, pseudo, data):
+        return Player(pseudo, Rating(data['rating']))
 
     def __load(self):
         try:
