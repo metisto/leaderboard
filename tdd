@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+while true; do
+    make test
+    echo -e "\nWait Changes"
+    inotifywait -qr -e modify -e create -e move -e delete .
+done
