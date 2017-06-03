@@ -16,23 +16,23 @@ class JsonPlayerRepository(object):
     def all_players_by_rating(self):
         return sorted(
             [Player(pseudo, Rating(data['rating'])) for pseudo, data in self.__data.iteritems()],
-            key=lambda x:x.rating.value,
+            key=lambda x: x.rating.value,
             reverse=True)
 
     def save(self, player):
-        self.__data[player.pseudo] = {'rating': player.rating.value }
+        self.__data[player.pseudo] = {'rating': player.rating.value}
         self.__save()
 
     def __load(self):
         try:
-            with file(self.__filename, "r") as fp:
+            with open(self.__filename, "r") as fp:
                 return json.load(fp)
         except ValueError:
             return {}
 
     def __save(self):
         try:
-            with file(self.__filename, "w") as fp:
+            with open(self.__filename, "w") as fp:
                 return json.dump(self.__data, fp, ensure_ascii=True, indent=True)
         except ValueError:
             return {}

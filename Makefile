@@ -1,4 +1,6 @@
 
+lint:
+	flake8
 
-test:
+test: lint
 	python -m unittest discover -s leaderboard -p "*_test.py"

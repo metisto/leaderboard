@@ -14,24 +14,28 @@ Options:
 
 """
 from docopt import docopt
-from leaderboard.model import Player, MemoryPlayerRepository, player_rating_updater, Rating, PlayerRank, Rank
+from leaderboard.model import player_rating_updater
 from leaderboard.infrastructure import JsonPlayerRepository
 from leaderboard.tower_fall import Score, Match, compute_ranking
 
 
 DATAFILE = "data.json"
 
+
 def repository():
     return JsonPlayerRepository(DATAFILE)
 
+
 def reset_leaderboard():
-    print "Reseting leaderboard"
     open(DATAFILE, 'w').close()
+    print('Leaderboard reseted\n')
+
 
 def show_leaderboard():
-    print "Leaderboard :"
+    print('Leaderboard :')
     for player in repository().all_players_by_rating():
-        print "  %-30s rating: %5d" % (player.pseudo, player.rating.value)
+        print("  %-30s rating: %5d" % (player.pseudo, player.rating.value))
+
 
 def update_towerfall(result):
     def to_score(result):
@@ -40,15 +44,15 @@ def update_towerfall(result):
             yield Score(iterator.next(), int(iterator.next()))
 
     ranking = compute_ranking(Match(list(to_score(result))))
-    print "Match ranking :"
+    print('Match ranking :')
     for player_rank in ranking:
-        print "  %-30s rank: %2d" % (player_rank.pseudo, player_rank.rank.value)
+        print("  %-30s rank: %2d" % (player_rank.pseudo, player_rank.rank.value))
 
-    print "\nNew player rating :"
+    print('\nNew player rating :')
     updater = player_rating_updater(repository())
     result = updater(*ranking)
     for pseudo, rating, delta in sorted(result):
-        print "  %-30s rating: %5d (%3d)" % (pseudo, rating.value, delta)
+        print("  %-30s rating: %5d (%3d)" % (pseudo, rating.value, delta))
 
 
 if __name__ == '__main__':
